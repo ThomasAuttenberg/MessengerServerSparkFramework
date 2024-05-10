@@ -4,6 +4,7 @@ import org.messenger.data.DAO;
 import org.messenger.data.DataBaseConnection;
 import org.messenger.data.entities.Message;
 
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -33,6 +34,7 @@ public class MessageDAO extends DAO<Message> {
         prevMessages,
         nextMessages
     }
+
     public LinkedList<Message> getByParentMessageIdPaginate(long parentMessageId, long dateTimeFrom, PagingMode pagingMode, int pageLimit){
         if(pageLimit > 250) pageLimit = 250;
         try(DataBaseConnection connection = new DataBaseConnection()){
@@ -45,7 +47,6 @@ public class MessageDAO extends DAO<Message> {
             }
             queryBuilder.append(") ORDER BY dateTime ASC");
             String query = queryBuilder.toString();
-            System.out.println(query);
             ResultSet set = connection.executeQuery(query);
             return resultSetToObjects(set);
         } catch (SQLException | IllegalAccessException e) {
@@ -53,7 +54,24 @@ public class MessageDAO extends DAO<Message> {
         }
 
     }
-
+    public void createWithSpecificId(Message entity){
+        try(DataBaseConnection connection = new DataBaseConnection()){
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("INSERT INTO messages (message_id, content, author_id) VALUES (")
+                    .append(entity.getMessageId())
+                    .append(",'")
+                    .append(entity.getContent())
+                    .append("',")
+                    .append(entity.getAuthorId())
+                    .append(");");
+            String query = queryBuilder.toString();
+            connection.execute(query);
+            System.out.println("executed");
+        }catch (SQLException e){
+            System.out.println("some exception "+e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public void create(Message entity){
         try {

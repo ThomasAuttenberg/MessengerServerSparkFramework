@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @DataBaseTable(name = "messages")
 public class Message implements DBSerializable {
     @DataBaseField(isPrimaryKey = true, isSequence = true)
-    private long message_id;
+    private Long message_id = null;
     @DataBaseField
     private Long parentmessage_id;
     @DataBaseField
@@ -22,8 +22,8 @@ public class Message implements DBSerializable {
     private int quotes;
     @DataBaseField
     private String extendedPath;
-
-    public long getMessageId() {
+    public void setMessage_id(Long messageId){this.message_id = messageId;}
+    public Long getMessageId() {
         return message_id;
     }
 

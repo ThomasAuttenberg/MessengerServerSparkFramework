@@ -26,7 +26,6 @@ public abstract class DAO<T extends DBSerializable> {
     protected final <fieldT> LinkedList<T> getByField(Field field, fieldT fieldValue) throws IllegalAccessException, SQLException {
         return this.loadByField(field,fieldValue);
     }
-
     public void create(T entity) throws IllegalAccessException, SQLException {
         StringBuilder queryBuilder = new StringBuilder("INSERT INTO "+dataBaseAssociatedTable+"(");
         StringBuilder valuesQueryBuilder = new StringBuilder();
@@ -110,7 +109,6 @@ public abstract class DAO<T extends DBSerializable> {
         primaryKey.setAccessible(true);
         query.append(" WHERE ").append(primaryKey.getName()).append(" = '").append(primaryKey.get(entity)).append("';");
         DataBaseConnection connection = new DataBaseConnection();
-        System.out.println(query.toString());
         connection.execute(query.toString());
         connection.close();
     }

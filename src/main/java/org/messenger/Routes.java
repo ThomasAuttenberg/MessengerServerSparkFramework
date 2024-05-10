@@ -256,25 +256,22 @@ public class Routes {
                 System.out.println(threadId);
                 MessageDAO messageDAO = new MessageDAO();
                 Message threadMessage = messageDAO.getByMessageId(threadId);
+                AuthTokenDAO authTokenDAO = new AuthTokenDAO();
+                AuthToken token = authTokenDAO.getByToken(req.headers("token"));
+                Message message = new Message();
+                message.setAuthorId(token.getUserid());
+                message.setContent((String)dataPacket.get("content"));
+                message.setDatetime(new Timestamp(new Date().getTime()));
+                message.setParentMessageId(threadId);
                 if(threadMessage != null){
-                    Message message = new Message();
-                    AuthTokenDAO authTokenDAO = new AuthTokenDAO();
-                    AuthToken token = authTokenDAO.getByToken(req.headers("token"));
-                    message.setAuthorId(token.getUserid());
-                    message.setContent((String)dataPacket.get("content"));
-                    message.setDatetime(new Timestamp(new Date().getTime()));
-                    message.setParentMessageId(threadId);
                     messageDAO.create(message);
-                    //JSONObject notification = new JSONObject();
-                    //notification.put("threadId",threadId);
-                    //notification.put("firstMessage",messageDAO.getByParentMessageIdPaginate(threadId, 0L, MessageDAO.PagingMode.nextMessages,1).getFirst().getContent());
-                    //Todo: notification!!!
                     NotificationConnection.notifyInThread(threadId);
-                    //NotificationManager.notifyInThread(threadId,notification);
-                    reply = StaticReplies.get(StaticReplies.Reply.MESSAGE_SENT);
                 }else{
-                    reply = StaticReplies.get(StaticReplies.Reply.THREAD_NOT_EXISTS);
+                    message.setMessage_id(threadId);
+                    messageDAO.createWithSpecificId(message);
+                    System.out.println("meow");
                 }
+                reply = StaticReplies.get(StaticReplies.Reply.MESSAGE_SENT);
             }else{
                 reply = StaticReplies.get(StaticReplies.Reply.NOT_AUTHORIZED);
             }
@@ -334,6 +331,7 @@ public class Routes {
             return StaticReplies.get(StaticReplies.Reply.INCORRECT_REQUEST).toJSONString();
 
         });
+
 
 
     }
