@@ -2,7 +2,7 @@ Messenger with a tree-like messages relation stucture (message can be reply for 
 <br>Client: https://github.com/ThomasAuttenberg/MessengerClient
 
 DataBase:
-<code>
+<pre>
 CREATE TABLE Users (
     user_id bigserial PRIMARY KEY,
     username varchar(50) UNIQUE NOT NULL,
@@ -66,4 +66,4 @@ BEGIN
     RETURN NEW;
 END;' LANGUAGE plpgsql;
 CREATE TRIGGER messagesCreatingTrigger AFTER INSERT ON Messages FOR EACH ROW EXECUTE FUNCTION messageCreatingHandler();
-</code>
+</pre>
